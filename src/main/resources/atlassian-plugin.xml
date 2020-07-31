@@ -1,0 +1,19 @@
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <param name="plugin-icon">images/pluginIcon.png</param>
+    <param name="plugin-logo">images/pluginLogo.png</param>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    <version>${project.version}</version>
+  </plugin-info>
+  <!-- add our i18n resource -->
+  <resource location="license-tracking" name="i18n" type="i18n"/>
+  <!-- add our web resources -->
+  <web-resource key="common-resources" name="Common Web Resources">
+    <context>license-tracking-app</context>
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <resource location="/css/license-tracking.css" name="license-tracking.css" type="download"/>
+    <resource location="/js/license-tracking.js" name="license-tracking.js" type="download"/>
+    <resource location="/images" name="images/" type="download"/>
+  </web-resource>
+</atlassian-plugin>
