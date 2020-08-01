@@ -31,6 +31,13 @@
       <version>${atlassian.spring.scanner.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.context.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
 
     <!-- Test Dependencies -->
     <dependency>
@@ -96,7 +103,8 @@
     <confluence.version>7.4.0</confluence.version>
     <confluence.data.version>7.4.0</confluence.data.version>
     <amps.version>8.1.0</amps.version>
-    <atlassian.spring.scanner.version>2.1.7</atlassian.spring.scanner.version>
+    <atlassian.spring.scanner.version>2.2.0</atlassian.spring.scanner.version>
+    <spring.context.version>5.2.8.RELEASE</spring.context.version>
     <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
     <atlassian.plugin.key>com.ntnguyen.app.confluence.license-tracking-app</atlassian.plugin.key>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

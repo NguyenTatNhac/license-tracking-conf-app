@@ -16,4 +16,12 @@
     <resource location="/js/license-tracking.js" name="license-tracking.js" type="download"/>
     <resource location="/images" name="images/" type="download"/>
   </web-resource>
+  <xhtml-macro class="com.ntnguyen.app.confluence.licensetracking.macro.LicenseTrackingMacro"
+    key='license-tracking-macro' name="License Tracking">
+    <category name="external-content"/>
+    <description key="license-tracking.macro.desc"/>
+    <parameters>
+      <parameter name="Name" type="string"/>
+    </parameters>
+  </xhtml-macro>
 </atlassian-plugin>

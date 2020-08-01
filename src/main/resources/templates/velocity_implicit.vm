@@ -1,0 +1,2 @@
+#* @implicitly included *#
+#* @vtlvariable name="webResourceManager" type="com.atlassian.plugin.webresource.WebResourceManager" *#
