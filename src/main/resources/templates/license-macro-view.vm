@@ -1,18 +1,28 @@
-<table class="aui">
+#* @vtlvariable name="licenses" type="java.util.List<com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicense>" *#
+<table class="aui aui-table-interactive license-table">
   <thead>
   <tr>
-    <th id="startDate">Start date</th>
+    <th id="startDate">Start Date</th>
     <th id="licenseId">License ID</th>
-    <th id="customer">Customer</th>
+    <th id="customer">Company</th>
+    <th id="app">App</th>
+    <th id="licenseType">License</th>
+    <th id="endDate">End Date</th>
   </tr>
   </thead>
   <tbody>
-  <tr>
-    <td headers="startDate">2020-07-30</td>
-    <td headers="licenseId">SEN-L15815014</td>
-    <td headers="customer" title="Nhac Tat Nguyen">
-      <a href="#">Nhac Tat Nguyen</a>
-    </td>
-  </tr>
+      #foreach($license in $licenses)
+      <tr>
+        <td headers="startDate">${license.getMaintenanceStartDate()}</td>
+        <td headers="licenseId">${license.getLicenseId()}</td>
+        <td headers="customer" title="${license.getContactDetails().getCompany()}">
+          <a href="#">${license.getContactDetails().getCompany()}</a>
+        </td>
+        <td headers="app">${license.getAddonName()}</td>
+        <td headers="licenseType">${license.getLicenseType()}</td>
+        <td headers="endDate">${license.getMaintenanceEndDate()}</td>
+      </tr>
+      #end
   </tbody>
 </table>
+<h3>Showing total <b>${licenses.size()} licenses</b></h3>

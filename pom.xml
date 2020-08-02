@@ -37,7 +37,24 @@
       <version>${spring.context.version}</version>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.context.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>${jersey.client.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.12</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- Test Dependencies -->
     <dependency>
@@ -72,12 +89,13 @@
             <Import-Package>
               org.springframework.osgi.*;resolution:="optional",
               org.eclipse.gemini.blueprint.*;resolution:="optional",
-              *
+              *;resolution:="optional"
             </Import-Package>
 
             <!-- Ensure plugin is spring powered -->
             <Spring-Context>*</Spring-Context>
           </instructions>
+          <extractDependencies>false</extractDependencies>
         </configuration>
       </plugin>
       <plugin>
@@ -105,6 +123,7 @@
     <amps.version>8.1.0</amps.version>
     <atlassian.spring.scanner.version>2.2.0</atlassian.spring.scanner.version>
     <spring.context.version>5.2.8.RELEASE</spring.context.version>
+    <jersey.client.version>1.8-atlassian-16</jersey.client.version>
     <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
     <atlassian.plugin.key>com.ntnguyen.app.confluence.license-tracking-app</atlassian.plugin.key>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
