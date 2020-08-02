@@ -22,4 +22,5 @@ public class MarketplaceLicense {
   private String status;
   private String tier;
   private ContactDetails contactDetails;
+  private PartnerDetails partnerDetails;
 }

@@ -31,7 +31,7 @@ public class LicenseTrackingMacro implements Macro {
   @Override
   public String execute(Map<String, String> map, String s, ConversionContext conversionContext) {
     Map<String, Object> ctx = new HashMap<>(map);
-    List<MarketplaceLicense> licenses = marketplaceService.getLicenses();
+    List<MarketplaceLicense> licenses = marketplaceService.getAllLicenses();
     ctx.put("licenses", licenses);
     pageBuilderService.assembler().resources().requireWebResource(APP_KEY + ":common-resources");
     return getRenderedTemplate("templates/license-macro-view.vm", ctx);

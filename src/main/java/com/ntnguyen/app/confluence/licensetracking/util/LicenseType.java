@@ -10,6 +10,7 @@ public class LicenseType {
   static {
     licenseTypeMap.put("EVALUATION", "Evaluation");
     licenseTypeMap.put("COMMERCIAL", "Paid");
+    licenseTypeMap.put("OPEN_SOURCE", "Free");
   }
 
   public static String getLicenseTypeName(String key) {

@@ -5,5 +5,7 @@ import java.util.List;
 
 public interface MarketplaceRestClientService {
 
+  List<MarketplaceLicense> getAllLicenses();
+
   List<MarketplaceLicense> getLicenses();
 }
