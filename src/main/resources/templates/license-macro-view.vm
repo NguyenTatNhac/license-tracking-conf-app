@@ -1,4 +1,4 @@
-#* @vtlvariable name="licenses" type="java.util.List<com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicense>" *#
+#* @vtlvariable name="licenses" type="java.util.List<com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity>" *#
 <table class="aui aui-table-interactive license-table">
   <thead>
   <tr>
@@ -15,11 +15,11 @@
       <tr>
         <td headers="startDate">${license.getMaintenanceStartDate()}</td>
         <td headers="licenseId">${license.getLicenseId()}</td>
-        <td headers="customer" title="${license.getContactDetails().getCompany()}">
-          <a href="#">${license.getContactDetails().getCompany()}</a>
+        <td headers="customer" title="${license.getContactDetails().getCompany().getName()}">
+          <a href="#">${license.getContactDetails().getCompany().getName()}</a>
         </td>
-        <td headers="app">${license.getAddonName()}</td>
-        <td headers="licenseType">${license.getLicenseType()}</td>
+        <td headers="app">${license.getApp().getName()}</td>
+        <td headers="licenseType">${license.getType().getName()}</td>
         <td headers="endDate">${license.getMaintenanceEndDate()}</td>
       </tr>
       #end

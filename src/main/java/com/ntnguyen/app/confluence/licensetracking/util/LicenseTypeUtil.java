@@ -3,7 +3,7 @@ package com.ntnguyen.app.confluence.licensetracking.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LicenseType {
+public class LicenseTypeUtil {
 
   private static final Map<String, String> licenseTypeMap = new HashMap<>();
 
@@ -17,7 +17,7 @@ public class LicenseType {
     return licenseTypeMap.get(key);
   }
 
-  private LicenseType() {
+  private LicenseTypeUtil() {
     // Util class
   }
 }

@@ -1,7 +1,5 @@
 package com.ntnguyen.app.confluence.licensetracking.service.rest.client;
 
-import static com.ntnguyen.app.confluence.licensetracking.util.LicenseType.getLicenseTypeName;
-
 import com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicense;
 import com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicenseResult;
 import com.ntnguyen.app.confluence.licensetracking.util.JacksonUtil;
@@ -50,7 +48,7 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
 
       if (licenses != null) {
         log.warn("Got total {} licenses when scanning", licenses.length);
-        return beautifyLicenses(Arrays.asList(licenses));
+        return Arrays.asList(licenses);
       }
     } catch (IOException e) {
       log.error("Error map JSON from InputStream", e);
@@ -71,7 +69,7 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
     if (result != null) {
       log.warn("Result: {}", result);
       if (result.getLicenses() != null) {
-        return beautifyLicenses(result.getLicenses());
+        return result.getLicenses();
       }
     }
 
@@ -83,13 +81,6 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
     String pwd = "JLVhjW.3z_LV#2@";
     String auth = new String(Base64.encode((username + ":" + pwd).getBytes()));
     return "Basic " + auth;
-  }
-
-  private List<MarketplaceLicense> beautifyLicenses(List<MarketplaceLicense> licenses) {
-    for (MarketplaceLicense license : licenses) {
-      license.setLicenseType(getLicenseTypeName(license.getLicenseType()));
-    }
-    return licenses;
   }
 
   @Override

@@ -1,4 +1,17 @@
 <atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+  <ao key="ao-module">
+    <description>Active Objects Module</description>
+    <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.AppEntity</entity>
+    <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.CompanyEntity</entity>
+    <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.ContactEntity</entity>
+    <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity</entity>
+    <entity>
+      com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseStatusEntity
+    </entity>
+    <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseTypeEntity</entity>
+    <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.PartnerEntity</entity>
+    <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.UserEntity</entity>
+  </ao>
   <plugin-info>
     <description>${project.description}</description>
     <param name="plugin-icon">images/pluginIcon.png</param>

@@ -55,6 +55,12 @@
       <version>1.18.12</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.atlassian.activeobjects</groupId>
+      <artifactId>activeobjects-plugin</artifactId>
+      <version>${ao.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- Test Dependencies -->
     <dependency>
@@ -121,6 +127,7 @@
     <confluence.version>7.4.0</confluence.version>
     <confluence.data.version>7.4.0</confluence.data.version>
     <amps.version>8.1.0</amps.version>
+    <ao.version>3.2.9</ao.version>
     <atlassian.spring.scanner.version>2.2.0</atlassian.spring.scanner.version>
     <spring.context.version>5.2.8.RELEASE</spring.context.version>
     <jersey.client.version>1.8-atlassian-16</jersey.client.version>
