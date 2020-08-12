@@ -5,8 +5,10 @@ import static com.ntnguyen.app.confluence.licensetracking.util.LicenseTypeUtil.g
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import com.ntnguyen.app.confluence.licensetracking.exception.ContactDetailsUndefinedException;
 import com.ntnguyen.app.confluence.licensetracking.exception.TechnicalContactUndefinedException;
 import com.ntnguyen.app.confluence.licensetracking.model.Contact;
+import com.ntnguyen.app.confluence.licensetracking.model.ContactDetails;
 import com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicense;
 import com.ntnguyen.app.confluence.licensetracking.model.PartnerDetails;
 import com.ntnguyen.app.confluence.licensetracking.persistent.entity.AppEntity;
@@ -20,6 +22,8 @@ import com.ntnguyen.app.confluence.licensetracking.persistent.entity.UserEntity;
 import com.opensymphony.util.TextUtils;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import javax.annotation.Nullable;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 import org.slf4j.Logger;
@@ -220,22 +224,53 @@ public class LicenseRepositoryImpl implements LicenseRepository {
   }
 
   private CompanyEntity createCompany(MarketplaceLicense license) {
-    CompanyEntity company = ao.create(CompanyEntity.class);
+    ContactDetails contactDetails = license.getContactDetails();
 
-    if (license.getContactDetails() != null) {
-      company.setName(license.getContactDetails().getCompany());
-      company.setCountry(license.getContactDetails().getCountry());
-      company.setRegion(license.getContactDetails().getRegion());
-      company.save();
-    } else {
+    if (contactDetails == null) {
       String message = String.format("A license should have Contact Details, but the current "
               + "license we are creating (ID = [%s]) does not have it, so we will create a "
               + "required company entity in the Database with name, country and region are null.",
           license.getLicenseId());
       log.warn(message);
+      throw new ContactDetailsUndefinedException(license.getLicenseId());
+    }
+
+    // Get company by name first and try to find the potential same company
+    CompanyEntity company = findSameCompany(license);
+
+    if (company == null) {
+      company = ao.create(CompanyEntity.class);
+      company.setName(license.getContactDetails().getCompany());
+      company.setCountry(license.getContactDetails().getCountry());
+      company.setRegion(license.getContactDetails().getRegion());
+      company.save();
     }
 
     return company;
+  }
+
+  @Nullable
+  private CompanyEntity findSameCompany(MarketplaceLicense license) {
+    ContactDetails contactDetails = license.getContactDetails();
+
+    Query query;
+    if (contactDetails.getCompany() != null) {
+      query = Query.select().where("COMPANY_NAME = ?", contactDetails.getCompany());
+    } else {
+      query = Query.select().where("COMPANY_NAME IS NULL");
+    }
+
+    List<CompanyEntity> potentialCompanies = Arrays.asList(ao.find(CompanyEntity.class, query));
+    return potentialCompanies.stream()
+        .filter(company -> isTheSameCompany(company, contactDetails))
+        .findFirst()
+        .orElse(null);
+  }
+
+  private boolean isTheSameCompany(CompanyEntity company, ContactDetails contactDetails) {
+    return Objects.equals(company.getName(), contactDetails.getCompany())
+        && Objects.equals(company.getCountry(), contactDetails.getCountry())
+        && Objects.equals(company.getRegion(), contactDetails.getRegion());
   }
 
   private LicenseStatusEntity createLicenseStatus(MarketplaceLicense license) {
