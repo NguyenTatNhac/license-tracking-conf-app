@@ -111,9 +111,22 @@ public class LicenseRepositoryImpl implements LicenseRepository {
     return ao.get(LicenseEntity.class, licenseId);
   }
 
+  @Nullable
+  @Override
+  public LicenseEntity getLatestSyncedLicense() {
+    LicenseEntity[] licenses = ao.find(LicenseEntity.class, Query.select()
+        .order("MAINTENANCE_START_DATE DESC").limit(1));
+    return licenses.length != 0 ? licenses[0] : null;
+  }
+
   @Override
   public List<LicenseEntity> getAll() {
     return Arrays.asList(ao.find(LicenseEntity.class));
+  }
+
+  @Override
+  public boolean isLicenseAlreadySaved(String licenseId) {
+    return get(licenseId) != null;
   }
 
   private PartnerEntity createPartner(MarketplaceLicense license) {

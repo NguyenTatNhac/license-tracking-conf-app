@@ -1,14 +1,16 @@
 package com.ntnguyen.app.confluence.licensetracking.service.rest.client;
 
+import com.atlassian.confluence.web.UrlBuilder;
 import com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicense;
 import com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicenseResult;
 import com.ntnguyen.app.confluence.licensetracking.util.JacksonUtil;
-import com.opensymphony.user.provider.ejb.util.Base64;
 import com.sun.jersey.api.client.Client;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
@@ -20,9 +22,13 @@ import org.springframework.stereotype.Service;
 public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientService,
     DisposableBean {
 
-  private static final String MARKETPLACE_BASE_URL = "https://marketplace.atlassian.com/rest/2";
-  private static final String LICENSES_ENDPOINT = "/vendors/1216227/reporting/licenses?limit=50";
-  private static final String EXPORT_ENDPOINT = "/vendors/1216227/reporting/licenses/export?accept=json";
+  // This is my credential at this time
+  private static final String CREDENTIAL = "bmhhYy50YXQubmd1eWVuQG1nbS10cC5jb206SkxWaGpXLjN6X0xWIzJA";
+
+  // Will get vendor id from somewhere else later
+  private static final String MARKETPLACE_BASE_URL = "https://marketplace.atlassian.com/rest/2/vendors/1216227";
+  private static final String LICENSES_REPORT_ENDPOINT = "/reporting/licenses";
+  private static final String LICENSES_EXPORT_ENDPOINT = "/reporting/licenses/export?accept=json";
 
   private final Logger log = LoggerFactory.getLogger(MarketplaceRestClientServiceImpl.class);
 
@@ -34,7 +40,7 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
 
   @Override
   public List<MarketplaceLicense> getAllLicenses() {
-    String endpoint = MARKETPLACE_BASE_URL + EXPORT_ENDPOINT;
+    String endpoint = MARKETPLACE_BASE_URL + LICENSES_EXPORT_ENDPOINT;
 
     // Download the JSON file of all license use the Export feature of Marketplace
     InputStream is = client.resource(endpoint)
@@ -58,29 +64,46 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
   }
 
   @Override
-  public List<MarketplaceLicense> getLicenses() {
-    String endpoint = MARKETPLACE_BASE_URL + LICENSES_ENDPOINT;
+  public List<MarketplaceLicense> getLicenses(Date fromDate, Date toDate) {
+    String endpoint = MARKETPLACE_BASE_URL + LICENSES_REPORT_ENDPOINT;
+
+    UrlBuilder urlBuilder = new UrlBuilder(endpoint);
+
+    String startDate = getValidDateFormat(fromDate);
+    urlBuilder.add("startDate", startDate);
+
+    String endDate = getValidDateFormat(toDate);
+    urlBuilder.add("endDate", endDate);
+
+    urlBuilder.add("sortBy", "startDate");
+    urlBuilder.add("order", "asc");
+    urlBuilder.add("limit", "50");
+
+    endpoint = urlBuilder.toUrl();
+    return getLicenses(endpoint);
+  }
+
+  private String getValidDateFormat(Date date) {
+    String pattern = "yyyy-MM-dd";
+    return new SimpleDateFormat(pattern).format(date);
+  }
+
+  private List<MarketplaceLicense> getLicenses(String endpoint) {
 
     MarketplaceLicenseResult result = client.resource(endpoint)
         .header("Authorization", getBasicAuthValue())
         .accept(MediaType.APPLICATION_JSON)
         .get(MarketplaceLicenseResult.class);
 
-    if (result != null) {
-      log.warn("Result: {}", result);
-      if (result.getLicenses() != null) {
-        return result.getLicenses();
-      }
+    if (result != null && result.getLicenses() != null) {
+      return result.getLicenses();
     }
 
     return Collections.emptyList();
   }
 
   private String getBasicAuthValue() {
-    String username = "nhac.tat.nguyen@mgm-tp.com";
-    String pwd = "JLVhjW.3z_LV#2@";
-    String auth = new String(Base64.encode((username + ":" + pwd).getBytes()));
-    return "Basic " + auth;
+    return "Basic " + CREDENTIAL;
   }
 
   @Override

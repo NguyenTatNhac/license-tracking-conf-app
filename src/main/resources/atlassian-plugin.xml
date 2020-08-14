@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
   <ao key="ao-module">
     <description>Active Objects Module</description>
@@ -19,9 +20,11 @@
     <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     <version>${project.version}</version>
   </plugin-info>
-  <!-- add our i18n resource -->
   <resource location="license-tracking" name="i18n" type="i18n"/>
-  <!-- add our web resources -->
+  <rest key="rest-v1" name="License Tracking REST API v1" path="/license-tracking" version="1">
+    <description>License Tracking REST API v1</description>
+    <package>com.ntnguyen.app.confluence.licensetracking.rest.v1</package>
+  </rest>
   <web-resource key="common-resources" name="Common Web Resources">
     <context>license-tracking-app</context>
     <dependency>com.atlassian.auiplugin:ajs</dependency>
@@ -30,7 +33,7 @@
     <resource location="/images" name="images/" type="download"/>
   </web-resource>
   <xhtml-macro class="com.ntnguyen.app.confluence.licensetracking.macro.LicenseTrackingMacro"
-    key='license-tracking-macro' name="License Tracking">
+    key="license-tracking-macro" name="License Tracking">
     <category name="external-content"/>
     <description key="license-tracking.macro.desc"/>
     <parameters>

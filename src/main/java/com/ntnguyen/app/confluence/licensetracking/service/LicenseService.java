@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface LicenseService {
 
-  void scanLicenses();
+  List<LicenseEntity> scanAllLicenses();
+
+  List<LicenseEntity> detectNewLicenses();
 
   LicenseEntity saveLicense(MarketplaceLicense license);
 

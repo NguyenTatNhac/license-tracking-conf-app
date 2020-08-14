@@ -10,5 +10,9 @@ public interface LicenseRepository {
 
   LicenseEntity get(String licenseId);
 
+  LicenseEntity getLatestSyncedLicense();
+
   List<LicenseEntity> getAll();
+
+  boolean isLicenseAlreadySaved(String licenseId);
 }
