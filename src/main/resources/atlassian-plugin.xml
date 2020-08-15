@@ -13,6 +13,15 @@
     <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.PartnerEntity</entity>
     <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.UserEntity</entity>
   </ao>
+
+  <!-- New License Detection Job which will runs each 1 hour -->
+  <job-config key="new-license-detection-job" name="New License Detection Job">
+    <job class="com.ntnguyen.app.confluence.licensetracking.cronjob.NewLicenseDetectionJob"
+      key="newLicenseDetectionJob" perClusterJob="true"/>
+    <managed canDisable="true" canRunAdhoc="true" editable="true" keepingHistory="false"/>
+    <schedule cron-expression="0 0 * ? * * *"/>
+  </job-config>
+
   <plugin-info>
     <description>${project.description}</description>
     <param name="plugin-icon">images/pluginIcon.png</param>

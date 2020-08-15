@@ -42,6 +42,8 @@ public class LicenseServiceImpl implements LicenseService {
 
     // We have not do any sync yet
     if (latestSynced == null) {
+      log.warn("Not found any license in the system. Looks like you have never done any license "
+          + "scanning before. We will start scanning all licenses instead of detecting new");
       return scanAllLicenses();
     }
 

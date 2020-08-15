@@ -19,30 +19,39 @@
   <packaging>atlassian-plugin</packaging>
 
   <dependencies>
+    <!-- Confluence API -->
     <dependency>
       <groupId>com.atlassian.confluence</groupId>
       <artifactId>confluence</artifactId>
       <version>${confluence.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- Provide Spring Scanner annotations -->
     <dependency>
       <groupId>com.atlassian.plugin</groupId>
       <artifactId>atlassian-spring-scanner-annotation</artifactId>
       <version>${atlassian.spring.scanner.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- This dependency to provide spring annotations and classes like @Service, @Component -->
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${spring.context.version}</version>
+      <groupId>com.atlassian.confluence</groupId>
+      <artifactId>confluence-spring-overrides</artifactId>
+      <version>${confluence.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- To create Jersey rest client to make call to Marketplace -->
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-client</artifactId>
       <version>${jersey.client.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- Handle JSON -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -129,7 +138,6 @@
     <amps.version>8.1.0</amps.version>
     <ao.version>3.2.9</ao.version>
     <atlassian.spring.scanner.version>2.2.0</atlassian.spring.scanner.version>
-    <spring.context.version>5.2.8.RELEASE</spring.context.version>
     <jersey.client.version>1.8-atlassian-16</jersey.client.version>
     <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
     <atlassian.plugin.key>com.ntnguyen.app.confluence.license-tracking-app</atlassian.plugin.key>

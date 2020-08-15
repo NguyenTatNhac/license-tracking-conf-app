@@ -13,6 +13,6 @@ public class MailServiceImpl implements MailService {
 
   @Override
   public void sendNewLicenseNotifyEmail(List<LicenseEntity> newLicenses) {
-    log.warn("Sending notification email about {} new licenses...", newLicenses.size());
+    log.info("Sending notification email about {} new licenses...", newLicenses.size());
   }
 }
