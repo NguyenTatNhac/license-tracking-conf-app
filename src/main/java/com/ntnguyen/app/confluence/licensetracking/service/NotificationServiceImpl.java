@@ -13,6 +13,8 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
   public void fireNewLicenseNotification(List<LicenseEntity> newLicenses) {
-    log.info("Firing notification about {} new licenses...", newLicenses.size());
+    if (!newLicenses.isEmpty()) {
+      log.info("In app notification about {} new licenses will come later!", newLicenses.size());
+    }
   }
 }
