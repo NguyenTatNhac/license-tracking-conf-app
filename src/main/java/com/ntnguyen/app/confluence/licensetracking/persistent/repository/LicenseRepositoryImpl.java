@@ -121,7 +121,8 @@ public class LicenseRepositoryImpl implements LicenseRepository {
 
   @Override
   public List<LicenseEntity> getAll() {
-    return Arrays.asList(ao.find(LicenseEntity.class));
+    return Arrays.asList(ao.find(LicenseEntity.class,
+        Query.select().order("MAINTENANCE_START_DATE DESC")));
   }
 
   @Override
