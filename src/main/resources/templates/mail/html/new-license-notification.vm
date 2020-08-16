@@ -1,0 +1,139 @@
+#* @vtlvariable name="action" type="com.ntnguyen.app.confluence.licensetracking.service.MailServiceImpl" *#
+#* @vtlvariable name="licenses" type="java.util.List<com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity>" *#
+<html lang="en">
+<head>
+  <title>New Marketplace License</title>
+  <style>
+    body {
+      font-family: "Open Sans", sans-serif;
+      line-height: 1.25;
+    }
+
+    table {
+      border: 1px solid #ccc;
+      border-collapse: collapse;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    table caption {
+      font-size: 1.5em;
+      margin: .5em 0 .75em;
+    }
+
+    table tr {
+      background-color: #f8f8f8;
+      border: 1px solid #ddd;
+      padding: .35em;
+    }
+
+    table th,
+    table td {
+      padding: .625em;
+      text-align: center;
+    }
+
+    table th {
+      font-size: .85em;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    @media screen and (max-width: 600px) {
+      table {
+        border: 0;
+      }
+
+      table caption {
+        font-size: 1.3em;
+      }
+
+      table thead {
+        border: none;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+      }
+
+      table tr {
+        border-bottom: 3px solid #ddd;
+        display: block;
+        margin-bottom: .625em;
+      }
+
+      table td {
+        border-bottom: 1px solid #ddd;
+        display: block;
+        font-size: .8em;
+        text-align: right;
+      }
+
+      table td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      table td:last-child {
+        border-bottom: 0;
+      }
+    }
+
+    td.licenseId, td.app, td.company, td.licenseType, td.period {
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <table class="table new-license-table">
+    <caption>New Marketplace Licenses</caption>
+    <thead>
+    <tr>
+      <th scope="col" id="licenseId">License ID</th>
+      <th scope="col" id="app">App</th>
+      <th scope="col" id="company">Company</th>
+      <th scope="col" id="contact">Contact</th>
+      <th scope="col" id="licenseType">License</th>
+      <th scope="col" id="period">Period</th>
+    </tr>
+    </thead>
+    <tbody>
+        #foreach($license in $licenses)
+        <tr>
+          <td class="licenseId" headers="licenseId" data-label="License ID">
+              ${license.getLicenseId()}
+          </td>
+          <td class="app" data-label="App">${license.getApp().getName()}</td>
+          <td class="company" data-label="Company">
+            <a href="#">${license.getContactDetails().getCompany().getName()}</a>
+          </td>
+          <td class="contact" data-label="Contact">
+              #set($contact = ${license.contactDetails.technicalContact})
+              ## Name can be null in Marketplace
+              #if ($contact.name)
+                  ${contact.name} (<a href="mailto:${contact.email}">${contact.email}</a>)
+              #else
+                <a href="mailto:${contact.email}">${contact.email}</a>
+              #end
+          </td>
+          <td class="licenseType" data-label="License">${license.getType().getName()}</td>
+          <td class="period" data-label="Period">
+              ${action.formatDate(${license.getMaintenanceStartDate()})}
+            -
+              ${action.formatDate(${license.getMaintenanceEndDate()})}
+          </td>
+        </tr>
+        #end
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
