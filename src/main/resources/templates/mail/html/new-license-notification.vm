@@ -2,7 +2,7 @@
 #* @vtlvariable name="licenses" type="java.util.List<com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity>" *#
 <html lang="en">
 <head>
-  <title>New Marketplace License</title>
+  <title>New Marketplace License Notification</title>
   <style>
     body {
       font-family: "Open Sans", sans-serif;
@@ -94,7 +94,10 @@
 <body>
 <div class="container">
   <table class="table new-license-table">
-    <caption>New Marketplace Licenses</caption>
+    <caption>We Found
+      <b>${licenses.size()}</b>
+      New Marketplace License#if(${licenses.size()} > 1)s#end
+    </caption>
     <thead>
     <tr>
       <th scope="col" id="licenseId">License ID</th>

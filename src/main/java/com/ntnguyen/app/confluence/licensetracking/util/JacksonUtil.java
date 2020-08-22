@@ -1,5 +1,6 @@
 package com.ntnguyen.app.confluence.licensetracking.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -18,6 +19,10 @@ public class JacksonUtil {
     ObjectNode json = getObjectMapper().createObjectNode();
     json.put(key, value);
     return json;
+  }
+
+  public static String toJson(Object o) throws JsonProcessingException {
+    return getObjectMapper().writeValueAsString(o);
   }
 
   private JacksonUtil() {

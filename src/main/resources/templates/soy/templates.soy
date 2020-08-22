@@ -1,0 +1,17 @@
+{namespace Confluence.Templates.MLT}
+
+/**
+ * The template to render a single row for subscriber
+ * @param email Email
+ */
+{template .subscriber}
+  <tr>
+    <td headers="email">
+      <span class="aui-icon aui-icon-small aui-iconfont-email"
+            title="{$email}">email</span>{$email}</td>
+    <td headers="actions">
+      <span class="aui-icon aui-icon-small aui-iconfont-cross hidden"
+            title="Remove this subscriber">Remove</span>
+    </td>
+  </tr>
+{/template}

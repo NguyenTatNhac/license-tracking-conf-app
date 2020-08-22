@@ -8,6 +8,8 @@ import com.atlassian.core.task.MultiQueueTaskManager;
 import com.atlassian.mail.queue.MailQueueItem;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity;
+import com.ntnguyen.app.confluence.licensetracking.persistent.entity.SubscriberEntity;
+import com.ntnguyen.app.confluence.licensetracking.persistent.repository.SubscriberRepository;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +29,13 @@ public class MailServiceImpl implements MailService {
   public static final String NOTIFICATION_TEMPLATE = "/templates/mail/html/new-license-notification.vm";
 
   private final MultiQueueTaskManager taskManager;
+  private final SubscriberRepository subscriberRepository;
 
   @Autowired
-  public MailServiceImpl(@ComponentImport MultiQueueTaskManager taskManager) {
+  public MailServiceImpl(@ComponentImport MultiQueueTaskManager taskManager,
+      SubscriberRepository subscriberRepository) {
     this.taskManager = taskManager;
+    this.subscriberRepository = subscriberRepository;
   }
 
   @Override
@@ -41,9 +46,15 @@ public class MailServiceImpl implements MailService {
       String subject = "New Marketplace License Notification";
       String body = getEmailHtmlBody(newLicenses);
 
-      MailQueueItem mailQueueItem = new ConfluenceMailQueueItem(
-          "nhac.tat.nguyen@mgm-tp.com,nguyentatnhac@gmail.com", subject, body, MIME_TYPE_HTML);
-      sendEmail(mailQueueItem);
+      List<SubscriberEntity> subscribers = subscriberRepository.getAll();
+
+      subscribers.forEach(subscriber -> {
+        if (subscriber.isActivating() && subscriber.isSubscribing()) {
+          sendEmail(
+              new ConfluenceMailQueueItem(subscriber.getEmail(), subject, body, MIME_TYPE_HTML)
+          );
+        }
+      });
     }
   }
 

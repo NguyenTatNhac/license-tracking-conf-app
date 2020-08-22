@@ -1,0 +1,7 @@
+.subscribers-container {
+  max-width: 646px;
+}
+
+.subscribers-container table th#email {
+  font-size: 14px;
+}

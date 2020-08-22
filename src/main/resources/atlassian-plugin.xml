@@ -1,5 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <param name="plugin-icon">images/pluginIcon.png</param>
+    <param name="plugin-logo">images/pluginLogo.png</param>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    <version>${project.version}</version>
+    <param name="configure.url">/plugins/mlt/config.action</param>
+  </plugin-info>
+
+  <!-- New License Detection Job which will runs each 1 hour -->
+  <job-config key="new-license-detection-job" name="New License Detection Job">
+    <job class="com.ntnguyen.app.confluence.licensetracking.cronjob.NewLicenseDetectionJob"
+      key="newLicenseDetectionJob" perClusterJob="true"/>
+    <managed canDisable="true" canRunAdhoc="true" editable="true" keepingHistory="false"/>
+    <schedule cron-expression="0 0 * ? * * *"/>
+  </job-config>
+
+  <!-- Web Resources -->
+  <resource location="license-tracking" name="i18n" type="i18n"/>
+  <web-resource key="common-resources" name="Common Web Resources">
+    <context>license-tracking-app</context>
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <resource location="/css/license-tracking.css" name="license-tracking.css" type="download"/>
+    <resource location="/js/license-tracking.js" name="license-tracking.js" type="download"/>
+    <resource location="/images" name="images/" type="download"/>
+  </web-resource>
+  <web-resource key="mlt-config-resource" name="MLT Configuration Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <dependency>${atlassian.plugin.key}:soy-templates</dependency>
+    <resource location="/css/admin/mlt-config.css" name="mlt-config.css" type="download"/>
+    <resource location="/js/admin/mlt-config.js" name="mlt-config.js" type="download"/>
+    <resource location="/images" name="images/" type="download"/>
+  </web-resource>
+  <web-resource key="soy-templates" name="Soy Templates Web Resources">
+    <resource type="download" name="soy-templates.js" location="/templates/soy/templates.soy"/>
+    <transformation extension="soy">
+      <transformer key="soyTransformer"/>
+    </transformation>
+  </web-resource>
+
+  <!-- Macro -->
+  <xhtml-macro class="com.ntnguyen.app.confluence.licensetracking.macro.LicenseTrackingMacro"
+    key="license-tracking-macro" name="License Tracking">
+    <category name="external-content"/>
+    <description key="license-tracking.macro.desc"/>
+    <parameters>
+      <parameter name="Name" type="string"/>
+    </parameters>
+  </xhtml-macro>
+
+  <!-- Web Fragments: web-item, web-panel, web-section -->
+  <web-item key="mlt-config-web-item" name="License Tracking App" section="system.admin/configuration" weight="10">
+    <description>The web-item to go to the configuration page of License tracking app</description>
+    <label>MLT Configuration</label>>
+    <tooltip>Marketplace License Tracking App Configuration</tooltip>
+    <link linkId="go-to-google">/plugins/mlt/config.action</link>
+  </web-item>
+
+  <xwork name="License Tracking Config XWork" key="mlt-config-xwork">
+    <package name="mlt-config" extends="default" namespace="/plugins/mlt">
+      <default-interceptor-ref name="defaultStack" />
+      <action name="config" class="com.ntnguyen.app.confluence.licensetracking.view.ConfigurationView">
+        <result name="success" type="velocity">/templates/admin/mlt-config.vm</result>
+      </action>
+    </package>
+  </xwork>
+
+  <rest key="rest-v1" name="License Tracking REST API v1" path="/license-tracking" version="1">
+    <description>License Tracking REST API v1</description>
+    <package>com.ntnguyen.app.confluence.licensetracking.rest.v1</package>
+  </rest>
+
   <ao key="ao-module">
     <description>Active Objects Module</description>
     <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.AppEntity</entity>
@@ -12,41 +84,6 @@
     <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseTypeEntity</entity>
     <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.PartnerEntity</entity>
     <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.UserEntity</entity>
+    <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.SubscriberEntity</entity>
   </ao>
-
-  <!-- New License Detection Job which will runs each 1 hour -->
-  <job-config key="new-license-detection-job" name="New License Detection Job">
-    <job class="com.ntnguyen.app.confluence.licensetracking.cronjob.NewLicenseDetectionJob"
-      key="newLicenseDetectionJob" perClusterJob="true"/>
-    <managed canDisable="true" canRunAdhoc="true" editable="true" keepingHistory="false"/>
-    <schedule cron-expression="0 0 * ? * * *"/>
-  </job-config>
-
-  <plugin-info>
-    <description>${project.description}</description>
-    <param name="plugin-icon">images/pluginIcon.png</param>
-    <param name="plugin-logo">images/pluginLogo.png</param>
-    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-    <version>${project.version}</version>
-  </plugin-info>
-  <resource location="license-tracking" name="i18n" type="i18n"/>
-  <rest key="rest-v1" name="License Tracking REST API v1" path="/license-tracking" version="1">
-    <description>License Tracking REST API v1</description>
-    <package>com.ntnguyen.app.confluence.licensetracking.rest.v1</package>
-  </rest>
-  <web-resource key="common-resources" name="Common Web Resources">
-    <context>license-tracking-app</context>
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    <resource location="/css/license-tracking.css" name="license-tracking.css" type="download"/>
-    <resource location="/js/license-tracking.js" name="license-tracking.js" type="download"/>
-    <resource location="/images" name="images/" type="download"/>
-  </web-resource>
-  <xhtml-macro class="com.ntnguyen.app.confluence.licensetracking.macro.LicenseTrackingMacro"
-    key="license-tracking-macro" name="License Tracking">
-    <category name="external-content"/>
-    <description key="license-tracking.macro.desc"/>
-    <parameters>
-      <parameter name="Name" type="string"/>
-    </parameters>
-  </xhtml-macro>
 </atlassian-plugin>
