@@ -32,4 +32,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
   public List<SubscriberEntity> getSubscribers() {
     return subscriberRepository.getAll();
   }
+
+  @Override
+  public void deleteSubscriber(String email) {
+    subscriberRepository.delete(email);
+  }
 }

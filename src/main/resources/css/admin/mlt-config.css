@@ -2,6 +2,20 @@
   max-width: 646px;
 }
 
-.subscribers-container table th#email {
+#subscribers-table th#email {
   font-size: 14px;
+}
+
+#subscribers-table tr:hover td:last-child > span.remove-subscriber {
+  display: inline;
+}
+
+.remove-subscriber {
+  display: none;
+  cursor: pointer;
+  color: #888;
+}
+
+.remove-subscriber:hover {
+  color: #333;
 }

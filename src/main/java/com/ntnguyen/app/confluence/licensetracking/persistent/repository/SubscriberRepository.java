@@ -14,9 +14,5 @@ public interface SubscriberRepository {
 
   List<SubscriberEntity> getAll();
 
-  void remove(int id);
-
-  void remove(SubscriberDto subscriber);
-
-  void remove(String email);
+  void delete(String email);
 }

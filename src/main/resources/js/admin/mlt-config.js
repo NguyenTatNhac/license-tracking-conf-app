@@ -9,6 +9,29 @@ AJS.$(document).ready(function () {
       return false;
     }
   });
+
+  AJS.$("#subscribers-table").on("click", ".remove-subscriber", function () {
+    var row = AJS.$(this).closest("tr");
+    var email = row.attr("subscriber");
+    var url = AJS.params.baseUrl
+        + "/rest/license-tracking/1/subscribers/delete/"
+        + email;
+
+    AJS.$.ajax(url, {
+      method: "DELETE"
+    }).done(
+        function () {
+          row.remove(); // Animation
+          subscribers = subscribers.filter(function (subscriber) {
+            return subscriber.email !== email;
+          });
+        }
+    ).fail(
+        function (err) {
+          showErrorFlag(err.responseJSON.message);
+        }
+    );
+  });
 });
 
 function onSubscriberFromSubmit() {
@@ -39,14 +62,18 @@ function addSubscriber(email) {
   var url = AJS.params.baseUrl + "/rest/license-tracking/1/subscribers/add";
   AJS.$.post(url, {
     email
-  }).done(function (data) {
-    row[0].classList.remove("aui-row-subtle");
-    AJS.$("#subscriberInput").val("");
-    subscribers.push(data);
-  }).fail(function (err) {
-    subscribeTable.find("tbody tr:first").remove();
-    showErrorFlag(err.responseJSON.message);
-  });
+  }).done(
+      function (data) {
+        row[0].classList.remove("aui-row-subtle");
+        AJS.$("#subscriberInput").val("");
+        subscribers.push(data);
+      }
+  ).fail(
+      function (err) {
+        subscribeTable.find("tbody tr:first").remove();
+        showErrorFlag(err.responseJSON.message);
+      }
+  );
 }
 
 function showErrorFlag(message) {

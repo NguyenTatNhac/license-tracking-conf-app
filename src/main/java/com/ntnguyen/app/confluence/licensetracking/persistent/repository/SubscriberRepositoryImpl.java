@@ -68,17 +68,7 @@ public class SubscriberRepositoryImpl implements SubscriberRepository {
   }
 
   @Override
-  public void remove(int id) {
-
-  }
-
-  @Override
-  public void remove(SubscriberDto subscriber) {
-
-  }
-
-  @Override
-  public void remove(String email) {
-
+  public void delete(String email) {
+    ao.deleteWithSQL(SubscriberEntity.class, "SUBSCRIBER_EMAIL = ?", email);
   }
 }

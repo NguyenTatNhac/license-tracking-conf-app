@@ -24,14 +24,14 @@
       </thead>
       <tbody>
           #foreach($subscriber in ${action.getSubscribers()})
-          <tr>
+          <tr subscriber="${subscriber.email}">
             <td headers="email">
               <span class="aui-icon aui-icon-small aui-iconfont-email"
-                    title="$subscriber.email"></span>
-                $subscriber.email
+                    title="${subscriber.email}"></span>
+                ${subscriber.email}
             </td>
             <td headers="actions">
-              <span class="aui-icon aui-icon-small aui-iconfont-cross hidden"
+              <span class="aui-icon aui-icon-small aui-iconfont-cross remove-subscriber"
                     title="Remove this subscriber"></span>
             </td>
           </tr>

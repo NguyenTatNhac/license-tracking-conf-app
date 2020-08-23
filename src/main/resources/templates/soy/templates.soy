@@ -5,13 +5,13 @@
  * @param email Email
  */
 {template .subscriber}
-  <tr>
+  <tr subscriber="{$email}">
     <td headers="email">
       <span class="aui-icon aui-icon-small aui-iconfont-email"
-            title="{$email}">email</span>{$email}</td>
+            title="{$email}"></span>{$email}</td>
     <td headers="actions">
-      <span class="aui-icon aui-icon-small aui-iconfont-cross hidden"
-            title="Remove this subscriber">Remove</span>
+      <span class="aui-icon aui-icon-small aui-iconfont-cross remove-subscriber"
+            title="Remove this subscriber"></span>
     </td>
   </tr>
 {/template}

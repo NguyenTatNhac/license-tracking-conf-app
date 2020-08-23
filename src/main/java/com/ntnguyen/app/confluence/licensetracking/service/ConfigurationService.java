@@ -10,4 +10,6 @@ public interface ConfigurationService {
   SubscriberEntity addSubscriber(String email);
 
   List<SubscriberEntity> getSubscribers();
+
+  void deleteSubscriber(String email);
 }
