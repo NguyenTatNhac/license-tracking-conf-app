@@ -1,0 +1,33 @@
+#* @vtlvariable name="action" type="com.ntnguyen.app.confluence.licensetracking.view.ConfigurationView" *#
+<html lang="en">
+<head>
+  <title>Marketplace License Tracking Configuration</title>
+  <content tag="no-page-header">true</content>
+  <meta name="decorator" content="admin"/>
+  <content tag="selectedWebItem">mlt-config-web-item</content>
+</head>
+<body>
+<div class="aui-tabs horizontal-tabs">
+  <ul class="tabs-menu">
+    <li class="menu-item active-tab">
+      <a href="#subscribers-tab">Subscribers</a>
+    </li>
+    <li class="menu-item">
+      <a href="#connection-tab">Marketplace Connection</a>
+    </li>
+  </ul>
+
+  <div class="tabs-pane active-pane" id="subscribers-tab">
+    <h2>Subscribers Management</h2>
+      #parse("/templates/admin/config/subscribers-tab.vm")
+  </div>
+
+  <div class="tabs-pane" id="connection-tab">
+    <h2>Marketplace Connection Setting</h2>
+      #parse("/templates/admin/config/connection-tab.vm")
+  </div>
+</div>
+</body>
+</html>
+$webResourceManager.requireResource(
+    "com.ntnguyen.app.confluence.license-tracking-app:mlt-config-resource")

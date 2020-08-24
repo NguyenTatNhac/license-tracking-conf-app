@@ -3,13 +3,54 @@ var subscribers;
 AJS.$(document).ready(function () {
   subscribers = JSON.parse(AJS.$("#subscribers").val());
 
+  checkMarketplaceConnectionStatus();
+
+  // Prevent submit of all forms in our config page, cuz we use ajax
+  AJS.$("form").submit(function () {
+    return false;
+  });
+  bindEnterKeyPressedSubscriberFrom();
+  bindDeleteSubscriberClickEvent();
+  bindSaveCredentialClickedEvent();
+});
+
+function bindSaveCredentialClickedEvent() {
+  AJS.$("#save-credential").click(function () {
+    var email = AJS.$("#mp-email").val();
+    var pwd = AJS.$("#mp-password").val();
+
+    var url = AJS.params.baseUrl
+        + "/rest/license-tracking/1/marketplace/credentials";
+
+    AJS.$.ajax(url, {
+      method: "POST",
+      data: {
+        email,
+        password: pwd
+      }
+    }).done(function () {
+      showErrorFlag("DOne");
+    }).fail(function () {
+      showErrorFlag("Failed");
+    });
+  });
+}
+
+function checkMarketplaceConnectionStatus() {
+  // "mp-credential"
+  // "mp-auth-email"
+}
+
+function bindEnterKeyPressedSubscriberFrom() {
   AJS.$("#subscriber-form").keypress(function (e) {
     if (e.key === "Enter") {
       onSubscriberFromSubmit();
       return false;
     }
   });
+}
 
+function bindDeleteSubscriberClickEvent() {
   AJS.$("#subscribers-table").on("click", ".remove-subscriber", function () {
     var row = AJS.$(this).closest("tr");
     var email = row.attr("subscriber");
@@ -32,7 +73,7 @@ AJS.$(document).ready(function () {
         }
     );
   });
-});
+}
 
 function onSubscriberFromSubmit() {
   var email = AJS.$("#subscriberInput").val().trim();
@@ -86,7 +127,7 @@ function showErrorFlag(message) {
 }
 
 function isValidEmail(email) {
-  const emailPattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const emailPattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return emailPattern.test(String(email).toLowerCase());
 }
 

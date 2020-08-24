@@ -19,6 +19,10 @@ public class ConfigurationView extends ConfluenceActionSupport {
   private List<SubscriberDto> subscribers;
   @Getter
   private String subscribersJson;
+  @Getter
+  private String mpCredential;
+  @Getter
+  private String mpAuthEmail;
 
   @Inject
   public ConfigurationView(ConfigurationService configurationService) {
@@ -32,6 +36,8 @@ public class ConfigurationView extends ConfluenceActionSupport {
         .collect(Collectors.toList());
 
     subscribersJson = JacksonUtil.toJson(subscribers);
+    mpCredential = configurationService.getCredential();
+    mpAuthEmail = configurationService.getMarketplaceAuthEmail();
     return SUCCESS;
   }
 }

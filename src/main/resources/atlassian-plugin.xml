@@ -62,7 +62,7 @@
     <package name="mlt-config" extends="default" namespace="/plugins/mlt">
       <default-interceptor-ref name="defaultStack" />
       <action name="config" class="com.ntnguyen.app.confluence.licensetracking.view.ConfigurationView">
-        <result name="success" type="velocity">/templates/admin/mlt-config.vm</result>
+        <result name="success" type="velocity">/templates/admin/config/mlt-config.vm</result>
       </action>
     </package>
   </xwork>
@@ -85,5 +85,6 @@
     <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.PartnerEntity</entity>
     <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.UserEntity</entity>
     <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.SubscriberEntity</entity>
+    <entity>com.ntnguyen.app.confluence.licensetracking.persistent.entity.SettingEntity</entity>
   </ao>
 </atlassian-plugin>

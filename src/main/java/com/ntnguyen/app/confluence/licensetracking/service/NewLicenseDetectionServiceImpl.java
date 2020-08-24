@@ -1,6 +1,8 @@
 package com.ntnguyen.app.confluence.licensetracking.service;
 
+import com.ntnguyen.app.confluence.licensetracking.exception.MarketplaceCredentialMissingException;
 import com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +29,20 @@ public class NewLicenseDetectionServiceImpl implements NewLicenseDetectionServic
   @Override
   public List<LicenseEntity> runDetection() {
     log.info("Start detecting new license...");
-    List<LicenseEntity> newLicenses = licenseService.detectNewLicenses();
+    try {
+      List<LicenseEntity> newLicenses = licenseService.detectNewLicenses();
 
-    if (newLicenses.isEmpty()) {
-      log.info("No new license was detected");
+      if (newLicenses.isEmpty()) {
+        log.info("No new license was detected");
+      }
+
+      mailService.sendNewLicenseNotifyEmail(newLicenses);
+      notificationService.fireNewLicenseNotification(newLicenses);
+
+      return newLicenses;
+    } catch (MarketplaceCredentialMissingException e) {
+      log.warn("Cannot connect to Marketplace to detect new license due to credential missing");
+      return Collections.emptyList();
     }
-
-    mailService.sendNewLicenseNotifyEmail(newLicenses);
-    notificationService.fireNewLicenseNotification(newLicenses);
-
-    return newLicenses;
   }
 }

@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface MarketplaceRestClientService {
 
+  boolean isValidCredentials(String email, String password);
+
   List<MarketplaceLicense> getAllLicenses();
 
   List<MarketplaceLicense> getLicenses(Date fromDate, Date toDate);

@@ -12,4 +12,10 @@ public interface ConfigurationService {
   List<SubscriberEntity> getSubscribers();
 
   void deleteSubscriber(String email);
+
+  String getCredential();
+
+  String getMarketplaceAuthEmail();
+
+  void saveCredential(String email, String password);
 }

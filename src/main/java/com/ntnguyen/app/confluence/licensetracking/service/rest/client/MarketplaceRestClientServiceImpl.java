@@ -1,10 +1,14 @@
 package com.ntnguyen.app.confluence.licensetracking.service.rest.client;
 
 import com.atlassian.confluence.web.UrlBuilder;
+import com.ntnguyen.app.confluence.licensetracking.exception.MarketplaceCredentialMissingException;
 import com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicense;
 import com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicenseResult;
+import com.ntnguyen.app.confluence.licensetracking.service.ConfigurationService;
+import com.ntnguyen.app.confluence.licensetracking.util.Base64Util;
 import com.ntnguyen.app.confluence.licensetracking.util.JacksonUtil;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -16,26 +20,43 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientService,
     DisposableBean {
 
-  // This is my credential at this time
-  private static final String CREDENTIAL = "bmhhYy50YXQubmd1eWVuQG1nbS10cC5jb206SkxWaGpXLjN6X0xWIzJA";
-
   // Will get vendor id from somewhere else later
   private static final String MARKETPLACE_BASE_URL = "https://marketplace.atlassian.com/rest/2/vendors/1216227";
   private static final String LICENSES_REPORT_ENDPOINT = "/reporting/licenses";
   private static final String LICENSES_EXPORT_ENDPOINT = "/reporting/licenses/export?accept=json";
+  private static final String AUTH_HEADER = "Authorization";
 
-  private final Logger log = LoggerFactory.getLogger(MarketplaceRestClientServiceImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(MarketplaceRestClientServiceImpl.class);
 
   private final Client client;
+  private final ConfigurationService configurationService;
 
-  public MarketplaceRestClientServiceImpl() {
+  @Autowired
+  public MarketplaceRestClientServiceImpl(ConfigurationService configurationService) {
+    this.configurationService = configurationService;
     client = Client.create();
+  }
+
+  @Override
+  public boolean isValidCredentials(String email, String password) {
+    // Check if user can manage mgm Vendor
+    String endpoint = MARKETPLACE_BASE_URL + LICENSES_REPORT_ENDPOINT + "?limit=1";
+
+    String credential = Base64Util.encodeBasicCredential(email, password);
+
+    ClientResponse response = client.resource(endpoint)
+        .header(AUTH_HEADER, "Basic " + credential)
+        .accept(MediaType.APPLICATION_JSON)
+        .get(ClientResponse.class);
+
+    return response.getStatus() == 200;
   }
 
   @Override
@@ -44,7 +65,7 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
 
     // Download the JSON file of all license use the Export feature of Marketplace
     InputStream is = client.resource(endpoint)
-        .header("Authorization", getBasicAuthValue())
+        .header(AUTH_HEADER, getBasicAuthValue())
         .accept(MediaType.APPLICATION_OCTET_STREAM)
         .get(InputStream.class);
 
@@ -91,7 +112,7 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
   private List<MarketplaceLicense> getLicenses(String endpoint) {
 
     MarketplaceLicenseResult result = client.resource(endpoint)
-        .header("Authorization", getBasicAuthValue())
+        .header(AUTH_HEADER, getBasicAuthValue())
         .accept(MediaType.APPLICATION_JSON)
         .get(MarketplaceLicenseResult.class);
 
@@ -103,7 +124,13 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
   }
 
   private String getBasicAuthValue() {
-    return "Basic " + CREDENTIAL;
+    String credential = configurationService.getCredential();
+
+    if (credential == null) {
+      throw new MarketplaceCredentialMissingException();
+    }
+
+    return "Basic " + credential;
   }
 
   @Override

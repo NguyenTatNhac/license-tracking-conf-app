@@ -1,0 +1,37 @@
+#* @vtlvariable name="action" type="com.ntnguyen.app.confluence.licensetracking.view.ConfigurationView" *#
+<div class="tab-content">
+  <form id="subscriber-form" class="aui">
+    <div class="field-group">
+      <label for="subscriberInput">Subscriber:</label>
+      <input type="text" id="subscriberInput" class="text long-field"
+             placeholder="input an email address">
+      <div class="description">Press Enter to add</div>
+    </div>
+    <div class="field-group subscribers-container">
+      <table id="subscribers-table" class="aui aui-table-list">
+        <thead>
+        <tr>
+          <th id="email">Subscribers</th>
+          <th id="actions"></th>
+        </tr>
+        </thead>
+        <tbody>
+            #foreach($subscriber in ${action.getSubscribers()})
+            <tr subscriber="${subscriber.email}">
+              <td headers="email">
+              <span class="aui-icon aui-icon-small aui-iconfont-email"
+                    title="${subscriber.email}"></span>
+                  ${subscriber.email}
+              </td>
+              <td headers="actions">
+              <span class="aui-icon aui-icon-small aui-iconfont-cross remove-subscriber"
+                    title="Remove this subscriber"></span>
+              </td>
+            </tr>
+            #end
+        </tbody>
+      </table>
+      <input id="subscribers" type="hidden" value="${action.getSubscribersJson()}">
+    </div>
+  </form>
+</div>
