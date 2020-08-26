@@ -1,9 +1,12 @@
 package com.ntnguyen.app.confluence.licensetracking.service.rest.client;
 
 import com.atlassian.confluence.web.UrlBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.ntnguyen.app.confluence.licensetracking.exception.MarketplaceCredentialMissingException;
 import com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicense;
 import com.ntnguyen.app.confluence.licensetracking.model.MarketplaceLicenseResult;
+import com.ntnguyen.app.confluence.licensetracking.model.MpCredential;
 import com.ntnguyen.app.confluence.licensetracking.service.ConfigurationService;
 import com.ntnguyen.app.confluence.licensetracking.util.Base64Util;
 import com.ntnguyen.app.confluence.licensetracking.util.JacksonUtil;
@@ -27,11 +30,12 @@ import org.springframework.stereotype.Service;
 public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientService,
     DisposableBean {
 
-  // Will get vendor id from somewhere else later
-  private static final String MARKETPLACE_BASE_URL = "https://marketplace.atlassian.com/rest/2/vendors/1216227";
-  private static final String LICENSES_REPORT_ENDPOINT = "/reporting/licenses";
-  private static final String LICENSES_EXPORT_ENDPOINT = "/reporting/licenses/export?accept=json";
+  private static final String MARKETPLACE_BASE_URL = "https://marketplace.atlassian.com";
+  private static final String LICENSES_REPORT_ENDPOINT = "/rest/2/vendors/1216227/reporting/licenses";
+  private static final String LICENSES_EXPORT_ENDPOINT = "/rest/2/vendors/1216227/reporting/licenses/export?accept=json";
+  private static final String GET_CURRENT_USER_ENDPOINT = "/rest/internal/users/current";
   private static final String AUTH_HEADER = "Authorization";
+  private static final String BASIC_AUTH_HEADER_PREFIX = "Basic ";
 
   private static final Logger log = LoggerFactory.getLogger(MarketplaceRestClientServiceImpl.class);
 
@@ -52,11 +56,47 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
     String credential = Base64Util.encodeBasicCredential(email, password);
 
     ClientResponse response = client.resource(endpoint)
-        .header(AUTH_HEADER, "Basic " + credential)
+        .header(AUTH_HEADER, BASIC_AUTH_HEADER_PREFIX + credential)
         .accept(MediaType.APPLICATION_JSON)
         .get(ClientResponse.class);
 
     return response.getStatus() == 200;
+  }
+
+  @Override
+  public MpCredential isValidCredentials(String credential) {
+    String endpoint = MARKETPLACE_BASE_URL + LICENSES_REPORT_ENDPOINT + "?limit=1";
+
+    ClientResponse response = client.resource(endpoint)
+        .header(AUTH_HEADER, BASIC_AUTH_HEADER_PREFIX + credential)
+        .accept(MediaType.APPLICATION_JSON)
+        .get(ClientResponse.class);
+
+    if (response.getStatus() != 200) {
+      return null;
+    }
+
+    endpoint = MARKETPLACE_BASE_URL + GET_CURRENT_USER_ENDPOINT;
+
+    response = client.resource(endpoint)
+        .header(AUTH_HEADER, BASIC_AUTH_HEADER_PREFIX + credential)
+        .accept(MediaType.APPLICATION_JSON)
+        .get(ClientResponse.class);
+
+    if (response.getStatus() == 200) {
+      String json = response.getEntity(String.class);
+      try {
+        JsonNode jsonObject = JacksonUtil.readTree(json);
+        String email = jsonObject.get("_embedded").get("user").get("email").asText();
+        String name = jsonObject.get("_embedded").get("user").get("name").asText();
+        return new MpCredential(email, name);
+      } catch (JsonProcessingException e) {
+        log.error("Error when check credential, the response is 200 but Jackson cannot read the "
+            + "json response", e);
+      }
+    }
+
+    return null;
   }
 
   @Override
@@ -130,7 +170,7 @@ public class MarketplaceRestClientServiceImpl implements MarketplaceRestClientSe
       throw new MarketplaceCredentialMissingException();
     }
 
-    return "Basic " + credential;
+    return BASIC_AUTH_HEADER_PREFIX + credential;
   }
 
   @Override

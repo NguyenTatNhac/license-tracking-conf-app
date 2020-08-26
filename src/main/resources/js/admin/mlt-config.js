@@ -22,6 +22,10 @@ function bindSaveCredentialClickedEvent() {
     var url = AJS.params.baseUrl
         + "/rest/license-tracking/1/marketplace/credentials";
 
+    AJS.$("#mp-email").prop('disabled', true);
+    AJS.$("#mp-password").prop('disabled', true);
+    AJS.$("#save-credential").prop('disabled', true);
+
     AJS.$.ajax(url, {
       method: "POST",
       data: {
@@ -29,16 +33,61 @@ function bindSaveCredentialClickedEvent() {
         password: pwd
       }
     }).done(function () {
-      showErrorFlag("DOne");
+      showCredentialSuccessMessage(email);
+      showSuccessFlag("Authenticated success as <b>" + email + "</b>");
+      AJS.$("#mp-email").val("");
+      AJS.$("#mp-password").val("");
     }).fail(function () {
-      showErrorFlag("Failed");
+      AJS.flag({
+        type: "error",
+        title: "Oops!",
+        body: 'Wrong credential. The login info could be incorrect, or the '
+            + 'account does not have permission to manage '
+            + '<a href="https://marketplace.atlassian.com/manage/vendors/1216227/addons" '
+            + 'target="_blank">mgm vendor</a>',
+        close: "manual"
+      });
+    }).always(function () {
+      AJS.$("#mp-email").prop('disabled', false);
+      AJS.$("#mp-password").prop('disabled', false);
+      AJS.$("#save-credential").prop('disabled', false);
     });
   });
 }
 
 function checkMarketplaceConnectionStatus() {
-  // "mp-credential"
-  // "mp-auth-email"
+  var credential = AJS.$("#mp-credential").val();
+  var email = AJS.$("#mp-auth-email").val();
+
+  if (credential === "" && email === "") {
+    return;
+  }
+
+  var url = AJS.params.baseUrl
+      + "/rest/license-tracking/1/marketplace/credentials/check";
+
+  AJS.$.ajax(url, {
+    method: "POST",
+    data: {
+      credential
+    }
+  }).done(function (data) {
+    showCredentialSuccessMessage(data.email);
+  }).fail(function () {
+    var message = Confluence.Templates.MLT.invalidCredential({
+      email
+    });
+    AJS.$("#credential-message").empty();
+    AJS.$("#credential-message").html(message);
+  });
+}
+
+function showCredentialSuccessMessage(email) {
+  var message = Confluence.Templates.MLT.validCredential({
+    email
+  });
+  AJS.$("#credential-message").empty();
+  AJS.$("#credential-message").html(message);
 }
 
 function bindEnterKeyPressedSubscriberFrom() {
@@ -55,8 +104,7 @@ function bindDeleteSubscriberClickEvent() {
     var row = AJS.$(this).closest("tr");
     var email = row.attr("subscriber");
     var url = AJS.params.baseUrl
-        + "/rest/license-tracking/1/subscribers/delete/"
-        + email;
+        + "/rest/license-tracking/1/subscribers/delete/" + email;
 
     AJS.$.ajax(url, {
       method: "DELETE"
@@ -121,6 +169,15 @@ function showErrorFlag(message) {
   AJS.flag({
     type: "error",
     title: "Oops!",
+    body: message,
+    close: "auto"
+  });
+}
+
+function showSuccessFlag(message) {
+  AJS.flag({
+    type: "success",
+    title: "Success!",
     body: message,
     close: "auto"
   });

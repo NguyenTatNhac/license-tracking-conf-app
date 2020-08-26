@@ -1,6 +1,10 @@
 package com.ntnguyen.app.confluence.licensetracking.rest.v1;
 
+import static com.ntnguyen.app.confluence.licensetracking.util.JacksonUtil.toJson;
+
 import com.atlassian.annotations.security.XsrfProtectionExcluded;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ntnguyen.app.confluence.licensetracking.model.MpCredential;
 import com.ntnguyen.app.confluence.licensetracking.service.ConfigurationService;
 import com.ntnguyen.app.confluence.licensetracking.service.rest.client.MarketplaceRestClientService;
 import javax.ws.rs.Consumes;
@@ -50,6 +54,21 @@ public class MarketplaceAuthController {
               + "\"email\": \"" + email + "\""
               + "}")
           .build();
+    }
+  }
+
+  @POST
+  @Path("/credentials/check")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces({MediaType.APPLICATION_JSON})
+  @XsrfProtectionExcluded
+  public Response checkAndSaveCredentials(@FormParam("credential") String credential)
+      throws JsonProcessingException {
+    MpCredential credentialModel = restClientService.isValidCredentials(credential);
+    if (credentialModel != null) {
+      return Response.ok(toJson(credentialModel)).build();
+    } else {
+      return Response.status(Status.UNAUTHORIZED).build();
     }
   }
 }

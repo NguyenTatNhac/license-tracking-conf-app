@@ -28,3 +28,7 @@
   min-width: 700px;
   max-width: 750px;
 }
+
+.credential-message {
+  padding: 10px 35px;
+}

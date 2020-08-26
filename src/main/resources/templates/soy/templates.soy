@@ -2,6 +2,7 @@
 
 /**
  * The template to render a single row for subscriber
+ *
  * @param email Email
  */
 {template .subscriber}
@@ -14,4 +15,32 @@
             title="Remove this subscriber"></span>
     </td>
   </tr>
+{/template}
+
+/**
+ * The template to render the message when credential is valid
+ *
+ * @param email Email
+ */
+{template .validCredential}
+  <div class="aui-message aui-message-success">
+    You are authenticating with Atlassian Marketplace as <b>{$email}</b>. Use the form below if you
+    want to authenticate using another account.
+  </div>
+{/template}
+
+/**
+ * The template to render the message when credential is invalid
+ *
+ * @param email Email
+ */
+{template .invalidCredential}
+  <div class="aui-message aui-message-error">
+    <p>Your current login info (<b>{$email}</b>) is no longer valid, please use the form below to
+      re-enter your information and try to connect to Atlassian Marketplace again!</p>
+    <p><b>Note: </b>The account must have the permission to manage&nbsp;
+      <a href="https://marketplace.atlassian.com/manage/vendors/1216227/addons" target="_blank">
+        mgm vendor account</a>. So please make sure the information you enter is correct, and your
+      account fulfill the require permission.</p>
+  </div>
 {/template}
