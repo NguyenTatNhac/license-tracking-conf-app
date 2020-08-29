@@ -18,6 +18,12 @@
   <description>license-tracking-conf-app plugin for Atlassian Confluence.</description>
   <packaging>atlassian-plugin</packaging>
 
+  <scm>
+    <developerConnection>
+      scm:git:git@github.com:NguyenTatNhac/license-tracking-conf-app.git
+    </developerConnection>
+  </scm>
+
   <dependencies>
     <!-- Confluence API -->
     <dependency>
@@ -137,6 +143,14 @@
         </executions>
         <configuration>
           <verbose>false</verbose>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
         </configuration>
       </plugin>
     </plugins>
