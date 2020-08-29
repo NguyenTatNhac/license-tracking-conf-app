@@ -2,6 +2,9 @@ package com.ntnguyen.app.confluence.licensetracking.rest.v1;
 
 import static com.ntnguyen.app.confluence.licensetracking.util.JacksonUtil.getSinglePropJson;
 
+import com.atlassian.confluence.security.PermissionManager;
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.ntnguyen.app.confluence.licensetracking.exception.MarketplaceCredentialMissingException;
 import com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity;
 import com.ntnguyen.app.confluence.licensetracking.service.LicenseService;
@@ -19,10 +22,13 @@ import org.springframework.stereotype.Component;
 @Path("/licenses")
 public class LicenseTrackingController {
 
+  private final PermissionManager permissionManager;
   private final LicenseService licenseService;
 
   @Autowired
-  public LicenseTrackingController(LicenseService licenseService) {
+  public LicenseTrackingController(@ComponentImport PermissionManager permissionManager,
+      LicenseService licenseService) {
+    this.permissionManager = permissionManager;
     this.licenseService = licenseService;
   }
 
@@ -30,6 +36,12 @@ public class LicenseTrackingController {
   @Path("/scan-all")
   @Produces({MediaType.APPLICATION_JSON})
   public Response scanAllLicenses() {
+    if (isNotAdmin()) {
+      return Response.status(Status.FORBIDDEN)
+          .entity("{\"message\": \"You are not allow to perform this operation\"}")
+          .build();
+    }
+
     try {
       List<LicenseEntity> licenses = licenseService.scanAllLicenses();
       return Response.ok(getSinglePropJson("scanned", licenses.size()).toString()).build();
@@ -44,6 +56,12 @@ public class LicenseTrackingController {
   @Path("/detect-new")
   @Produces({MediaType.APPLICATION_JSON})
   public Response detectNewLicenses() {
+    if (isNotAdmin()) {
+      return Response.status(Status.FORBIDDEN)
+          .entity("{\"message\": \"You are not allow to perform this operation\"}")
+          .build();
+    }
+
     try {
       List<LicenseEntity> newLicenses = licenseService.detectNewLicenses();
       return Response.ok(getSinglePropJson("newLicenses", newLicenses.size()).toString()).build();
@@ -52,5 +70,9 @@ public class LicenseTrackingController {
           .entity("{\"message\": \"Could not connect to Marketplace, credential is missing!\"}")
           .build();
     }
+  }
+
+  private boolean isNotAdmin() {
+    return !permissionManager.isConfluenceAdministrator(AuthenticatedUserThreadLocal.get());
   }
 }

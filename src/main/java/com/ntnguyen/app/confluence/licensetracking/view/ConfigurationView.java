@@ -30,6 +30,11 @@ public class ConfigurationView extends ConfluenceActionSupport {
   }
 
   @Override
+  public boolean isPermitted() {
+    return isConfluenceAdmin();
+  }
+
+  @Override
   public String execute() throws JsonProcessingException {
     subscribers = configurationService.getSubscribers().stream()
         .map(SubscriberMapper::subscriberEntityToDto)
@@ -39,5 +44,9 @@ public class ConfigurationView extends ConfluenceActionSupport {
     mpCredential = configurationService.getCredential();
     mpAuthEmail = configurationService.getMarketplaceAuthEmail();
     return SUCCESS;
+  }
+
+  private boolean isConfluenceAdmin() {
+    return permissionManager.isConfluenceAdministrator(getAuthenticatedUser());
   }
 }

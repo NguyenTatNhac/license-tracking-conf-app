@@ -3,6 +3,9 @@ package com.ntnguyen.app.confluence.licensetracking.rest.v1;
 import static com.ntnguyen.app.confluence.licensetracking.util.JacksonUtil.toJson;
 
 import com.atlassian.annotations.security.XsrfProtectionExcluded;
+import com.atlassian.confluence.security.PermissionManager;
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ntnguyen.app.confluence.licensetracking.model.MpCredential;
 import com.ntnguyen.app.confluence.licensetracking.service.ConfigurationService;
@@ -22,12 +25,15 @@ import org.springframework.stereotype.Component;
 @Path("/marketplace")
 public class MarketplaceAuthController {
 
+  private final PermissionManager permissionManager;
   private final ConfigurationService configurationService;
   private final MarketplaceRestClientService restClientService;
 
   @Autowired
-  public MarketplaceAuthController(ConfigurationService configurationService,
+  public MarketplaceAuthController(@ComponentImport PermissionManager permissionManager,
+      ConfigurationService configurationService,
       MarketplaceRestClientService restClientService) {
+    this.permissionManager = permissionManager;
     this.configurationService = configurationService;
     this.restClientService = restClientService;
   }
@@ -39,6 +45,12 @@ public class MarketplaceAuthController {
   @XsrfProtectionExcluded
   public Response checkAndSaveCredentials(@FormParam("email") String email,
       @FormParam("password") String password) {
+    if (isNotAdmin()) {
+      return Response.status(Status.FORBIDDEN)
+          .entity("{\"message\": \"You are not allow to perform this operation\"}")
+          .build();
+    }
+
     boolean isValidCredential = restClientService.isValidCredentials(email, password);
 
     if (isValidCredential) {
@@ -64,11 +76,21 @@ public class MarketplaceAuthController {
   @XsrfProtectionExcluded
   public Response checkAndSaveCredentials(@FormParam("credential") String credential)
       throws JsonProcessingException {
+    if (isNotAdmin()) {
+      return Response.status(Status.FORBIDDEN)
+          .entity("{\"message\": \"You are not allow to perform this operation\"}")
+          .build();
+    }
+
     MpCredential credentialModel = restClientService.isValidCredentials(credential);
     if (credentialModel != null) {
       return Response.ok(toJson(credentialModel)).build();
     } else {
       return Response.status(Status.UNAUTHORIZED).build();
     }
+  }
+
+  private boolean isNotAdmin() {
+    return !permissionManager.isConfluenceAdministrator(AuthenticatedUserThreadLocal.get());
   }
 }

@@ -56,6 +56,7 @@
     <label>MLT Configuration</label>>
     <tooltip>Marketplace License Tracking App Configuration</tooltip>
     <link linkId="go-to-google">/plugins/mlt/config.action</link>
+    <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.ConfluenceAdministratorCondition"/>
   </web-item>
 
   <xwork name="License Tracking Config XWork" key="mlt-config-xwork">
@@ -63,6 +64,7 @@
       <default-interceptor-ref name="defaultStack" />
       <action name="config" class="com.ntnguyen.app.confluence.licensetracking.view.ConfigurationView">
         <result name="success" type="velocity">/templates/admin/config/mlt-config.vm</result>
+        <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.ConfluenceAdministratorCondition"/>
       </action>
     </package>
   </xwork>
