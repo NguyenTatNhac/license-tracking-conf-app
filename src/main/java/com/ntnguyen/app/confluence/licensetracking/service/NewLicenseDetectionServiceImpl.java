@@ -2,6 +2,7 @@ package com.ntnguyen.app.confluence.licensetracking.service;
 
 import com.ntnguyen.app.confluence.licensetracking.exception.MarketplaceCredentialMissingException;
 import com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
@@ -42,7 +43,19 @@ public class NewLicenseDetectionServiceImpl implements NewLicenseDetectionServic
       return newLicenses;
     } catch (MarketplaceCredentialMissingException e) {
       log.warn("Cannot connect to Marketplace to detect new license due to credential missing");
-      return Collections.emptyList();
+    } catch (UniformInterfaceException e) {
+      int status = e.getResponse().getStatus();
+      if (status == 401) {
+        log.warn("The detection was not successful, your Marketplace credential is incorrect. "
+            + "Please go to MLT Configuration to enter new credential.");
+      } else if (status == 403) {
+        log.warn("The detection was not successful, your Marketplace credential does not have "
+            + "permission to manage the mgm Vendor account. Please go to MLT Configuration to "
+            + "enter new credential.");
+      } else {
+        log.error("The detection was not successful due to error", e);
+      }
     }
+    return Collections.emptyList();
   }
 }
