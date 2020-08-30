@@ -3,8 +3,10 @@
   "version": "2.0.0-SNAPSHOT",
   "private": true,
   "dependencies": {
+    "@atlaskit/dynamic-table": "^14.1.1",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "styled-components": "^5.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

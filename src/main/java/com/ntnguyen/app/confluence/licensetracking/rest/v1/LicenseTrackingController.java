@@ -2,13 +2,19 @@ package com.ntnguyen.app.confluence.licensetracking.rest.v1;
 
 import static com.ntnguyen.app.confluence.licensetracking.util.JacksonUtil.getSinglePropJson;
 
+import com.atlassian.annotations.security.XsrfProtectionExcluded;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ntnguyen.app.confluence.licensetracking.dto.LicenseDto;
 import com.ntnguyen.app.confluence.licensetracking.exception.MarketplaceCredentialMissingException;
+import com.ntnguyen.app.confluence.licensetracking.mapper.LicenseMapper;
 import com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity;
 import com.ntnguyen.app.confluence.licensetracking.service.LicenseService;
+import com.ntnguyen.app.confluence.licensetracking.util.JacksonUtil;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -30,6 +36,17 @@ public class LicenseTrackingController {
       LicenseService licenseService) {
     this.permissionManager = permissionManager;
     this.licenseService = licenseService;
+  }
+
+  @GET
+  @Produces({MediaType.APPLICATION_JSON})
+  @XsrfProtectionExcluded
+  public Response getAllLicenses() throws JsonProcessingException {
+    List<LicenseDto> licenseDtos = licenseService.getAll().stream()
+        .map(LicenseMapper::licenseEntityToDto)
+        .collect(Collectors.toList());
+
+    return Response.ok(JacksonUtil.toJson(licenseDtos)).build();
   }
 
   @GET
