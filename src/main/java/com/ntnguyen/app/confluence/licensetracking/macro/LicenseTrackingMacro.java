@@ -37,6 +37,7 @@ public class LicenseTrackingMacro implements Macro {
     ctx.put("licenses", licenses);
     ctx.put("action", this);
     pageBuilderService.assembler().resources().requireWebResource(APP_KEY + ":common-resources");
+    pageBuilderService.assembler().resources().requireWebResource(APP_KEY + ":mlt-macro-resource");
     return getRenderedTemplate("templates/license-macro-view.vm", ctx);
   }
 

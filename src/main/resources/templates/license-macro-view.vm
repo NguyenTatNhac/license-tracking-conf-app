@@ -1,5 +1,6 @@
 #* @vtlvariable name="action" type="com.ntnguyen.app.confluence.licensetracking.macro.LicenseTrackingMacro" *#
 #* @vtlvariable name="licenses" type="java.util.List<com.ntnguyen.app.confluence.licensetracking.persistent.entity.LicenseEntity>" *#
+<div id="mlt-macro-mount"></div>
 <table class="aui aui-table-interactive license-table">
   <thead>
   <tr>

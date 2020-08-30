@@ -56,7 +56,6 @@
       <scope>provided</scope>
     </dependency>
 
-
     <!-- To create Jersey rest client to make call to Marketplace -->
     <dependency>
       <groupId>com.sun.jersey</groupId>
@@ -95,6 +94,18 @@
   </dependencies>
 
   <build>
+    <!-- Don't let YUI compressor from AMPS to process our js code, because we are going to use
+         ReactJS + Webpack, so we will handover this process for Webpack. -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering> <!-- YUI, don't filter and touch resource at the defined dir -->
+        <excludes>
+          <exclude>**/*.js</exclude>
+        </excludes>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>com.atlassian.maven.plugins</groupId>
@@ -124,10 +135,14 @@
 
             <!-- Ensure plugin is spring powered -->
             <Spring-Context>*</Spring-Context>
+
+            <!-- Tell host product to scan here for modules also, not only atlassian-plugin.xml -->
+            <Atlassian-Scan-Folders>META-INF/plugin-descriptors</Atlassian-Scan-Folders>
           </instructions>
           <extractDependencies>false</extractDependencies>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>com.atlassian.plugin</groupId>
         <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
@@ -144,16 +159,75 @@
           <verbose>false</verbose>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.3</version>
         <configuration>
           <tagNameFormat>v@{project.version}</tagNameFormat>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>process-static-resources</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <workingDirectory>${frontend.dir}</workingDirectory>
+              <executable>npm</executable>
+              <arguments>
+                <argument>run</argument>
+                <argument>build</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>frontend-watch</id>
+      <activation>
+        <property>
+          <name>frontend-watch</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>process-static-resources</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <workingDirectory>${frontend.dir}</workingDirectory>
+                  <executable>npm</executable>
+                  <arguments>
+                    <argument>run</argument>
+                    <argument>watch:prepare</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <properties>
     <confluence.version>7.4.0</confluence.version>
@@ -167,5 +241,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <frontend.dir>./src/main/frontend</frontend.dir>
   </properties>
 </project>
