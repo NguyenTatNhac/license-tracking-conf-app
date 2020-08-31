@@ -1,6 +1,5 @@
 package com.ntnguyen.app.confluence.licensetracking.macro;
 
-import static com.atlassian.confluence.util.velocity.VelocityUtils.getRenderedTemplate;
 import static com.ntnguyen.app.confluence.licensetracking.util.Constants.APP_KEY;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
@@ -24,7 +23,7 @@ public class LicenseTrackingMacro implements Macro {
   @Override
   public String execute(Map<String, String> map, String s, ConversionContext conversionContext) {
     pageBuilderService.assembler().resources().requireWebResource(APP_KEY + ":mlt-macro-resource");
-    return getRenderedTemplate("templates/license-macro-view.vm", map);
+    return "<div id=\"mlt-macro-mount\"></div>";
   }
 
   @Override

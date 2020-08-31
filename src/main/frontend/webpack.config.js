@@ -15,6 +15,7 @@ const getWrmPlugin = (watch = false, watchPrepare = false) => {
     webresourceKeyMap: {
       // Take the entry "mltMacroEntry" and create a resource with key "mlt-macro-resource"
       'mltMacroEntry': 'mlt-macro-resource',
+      'mltConfigEntry': 'mlt-config-resource',
     },
     xmlDescriptors: path.join(OUTPUT_DIR, 'META-INF', 'plugin-descriptors',
       'wr-webpack-bundles.xml'),
@@ -27,6 +28,7 @@ const getWrmPlugin = (watch = false, watchPrepare = false) => {
 const webpackConfig = {
   entry: {
     mltMacroEntry: path.join(SRC_DIR, 'entry/mlt-macro.entry.js'),
+    mltConfigEntry: path.join(SRC_DIR, 'entry/mlt-config.entry.js'),
   },
   output: {
     filename: '[name].[chunkhash].js',
