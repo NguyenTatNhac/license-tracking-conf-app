@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import Tabs from '@atlaskit/tabs';
 import SubscriberConfiguration from './config/SubscriberConfiguration';

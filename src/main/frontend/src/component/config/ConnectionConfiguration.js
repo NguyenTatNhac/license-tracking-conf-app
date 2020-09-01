@@ -1,3 +1,4 @@
+// @flow
 import React, { Fragment } from 'react';
 import Button, { ButtonGroup } from '@atlaskit/button';
 import TextField from '@atlaskit/textfield';

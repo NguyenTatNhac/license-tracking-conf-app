@@ -18,6 +18,7 @@
     "@babel/core": "^7.9.0",
     "@babel/plugin-transform-react-jsx": "^7.10.4",
     "@babel/preset-env": "^7.9.5",
+    "@babel/preset-flow": "^7.10.4",
     "@babel/preset-react": "^7.9.4",
     "atlassian-webresource-webpack-plugin": "^4.9.0",
     "babel-loader": "^8.1.0",
@@ -31,6 +32,7 @@
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^2.5.1",
     "file-loader": "^6.0.0",
+    "flow-bin": "^0.132.0",
     "prettier": "^2.0.4",
     "style-loader": "^1.1.4",
     "webpack": "^4.42.1",
@@ -39,6 +41,7 @@
     "webpack-merge": "^4.1.4"
   },
   "scripts": {
+    "flow": "flow",
     "build": "webpack --mode production",
     "mvnpackage": "mvn package -DskipTests -T 4",
     "mvnpackage:watch": "npm mvnpackage -P frontend-watch",

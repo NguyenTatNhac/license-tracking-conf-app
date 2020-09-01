@@ -1,3 +1,4 @@
+// @flow
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DynamicTable from '@atlaskit/dynamic-table';
@@ -65,7 +66,7 @@ function LicenseTrackingMacro() {
     let url = AJS.params.baseUrl + '/rest/license-tracking/1/licenses';
     axios.get(url)
     .then(rowsResponse => {
-      let tableRows = rowsResponse.data.map(license => {
+      let tableRows = rowsResponse.data.map((license: License) => {
           let contact = license.contact;
           let technicalContact = contact.technicalContact;
           return {
@@ -128,6 +129,21 @@ function LicenseTrackingMacro() {
       defaultSortOrder="DESC"
     />
   );
+}
+
+type License = {
+  licenseId: string,
+  addonName: string,
+  contact: {
+    company: string,
+    technicalContact: {
+      email: string
+    }
+  },
+  licenseType: string,
+  maintenanceStartDate: Date,
+  maintenanceEndDate: Date,
+  status: string
 }
 
 export default LicenseTrackingMacro;
