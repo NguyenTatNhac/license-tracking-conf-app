@@ -113,6 +113,7 @@
         <version>${amps.version}</version>
         <extensions>true</extensions>
         <configuration>
+          <jvmArgs>-Xmx4096m</jvmArgs>
           <productVersion>${confluence.version}</productVersion>
           <productDataVersion>${confluence.data.version}</productDataVersion>
           <enableQuickReload>true</enableQuickReload>
@@ -230,8 +231,8 @@
   </profiles>
 
   <properties>
-    <confluence.version>7.4.0</confluence.version>
-    <confluence.data.version>7.4.0</confluence.data.version>
+    <confluence.version>7.7.3</confluence.version>
+    <confluence.data.version>7.7.3</confluence.data.version>
     <amps.version>8.1.0</amps.version>
     <ao.version>3.2.9</ao.version>
     <atlassian.spring.scanner.version>2.2.0</atlassian.spring.scanner.version>
